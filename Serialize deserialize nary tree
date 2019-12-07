@@ -1,0 +1,71 @@
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> children;
+
+    public Node() {}
+
+    public Node(int _val,List<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+class Pair {
+    Node node;
+    int size;
+    public Pair(Node node, int size) {
+        this.node = node;
+        this.size = size;
+    }
+}
+class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(Node root) {
+        if(root == null) {
+            return "";
+        }
+        Queue<Node> q= new LinkedList<>();
+        List<String> list = new ArrayList<>();
+        q.offer(root);
+        while(!q.isEmpty()) {
+            Node node = q.poll();
+            int size = node.children.size();
+            list.add(String.valueOf(node.val));
+            list.add(String.valueOf(size));
+            for(Node child : node.children) {
+                q.offer(child);
+            }
+        }
+        return String.join(",", list);
+        
+    }
+
+    // Decodes your encoded data to tree.
+    int index = 0;
+    public Node deserialize(String data) {
+        if(data.length() == 0) {
+            return null;
+        }
+        String[] value = data.split(",");
+        Queue<Pair> q = new LinkedList<>();
+        Node root = new Node(Integer.parseInt(value[index++]), new ArrayList<>());
+        q.offer(new Pair(root, Integer.parseInt(value[index++])));
+        while(!q.isEmpty()) {
+            Pair cur = q.poll();
+            int size = cur.size;
+            Node node = cur.node;
+            for(int i = 0; i < size; ++i) {
+                int child_val = Integer.parseInt(value[index++]);
+                int child_size = Integer.parseInt(value[index++]);
+                Node child = new Node(child_val, new ArrayList<>());
+                node.children.add(child);
+                q.offer(new Pair(child, child_size));
+            }
+        }
+        return root;
+    }
+}
+
