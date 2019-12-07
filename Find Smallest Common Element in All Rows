@@ -1,0 +1,67 @@
+Given a matrix mat where every row is sorted in increasing order, return the smallest common element in all rows.
+
+If there is no common element, return -1.
+
+The fact that every row is sorted in the increasing order tells us that there are no duplicates within a single row. So, if an element appears in all rows, it will appear exactly n times (where n is the number of rows).
+
+We can count all elements, and then pick the smallest one that appears n times. This approach has a linear time complexity - at the cost of additional memory for storing counts.
+
+Also, we can use a binary search to look elements up directly in the matrix. We won't need any additional memory, though this approach will be a bit slower.
+
+Finally, we can track positions for each row. We will then repeatedly advance positions for smaller elements until all positions point to the common element - if there is one. The time complexity will be linear, and it will require less memory than when storing counts.
+
+Approach 1: Count Elements
+
+Iterate through all elements row-by-row and count each element. Since elements are constrained to [1...10000], we'll use an array of that size to store counts.
+
+Then, iterate through the array left-to-right, and return the first element that appears n times. This is, by the way, how the counting sort works.
+
+For an unconstrained problem, we'll need to use an ordered map to store counts.
+Count Elements Illustration
+
+Algorithm
+
+Iterate i through each row.
+
+Iterate j through each column.
+
+Increment count for element mat[i][j].
+Iterate k from 1 to 10000.
+
+If count[k] equals n, return k.
+Return -1.
+
+public int smallestCommonElement(int[][] mat) {
+    int count[] = new int[10001];
+    int n = mat.length, m = mat[0].length;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            ++count[mat[i][j]];
+        }
+    }
+    for (int k = 1; k <= 10000; ++k) {
+        if (count[k] == n) {
+            return k;
+        }
+    } 
+    return -1;
+}
+
+------------------------------------------------------
+
+Handling Duplicates
+
+If elements are in non-decreasing order, we'll need to modify these solutions to properly handle duplicates. For example, we return 4 (initial solution) and 7 (improved solution) instead of 5 for this test case:
+
+[[1,2,3,4,5],[5,7,7,7,7],[5,7,7,7,7],[1,2,4,4,5],[1,2,4,4,5]]
+
+It's easy to modify these solutions to handle duplicates. Since elements in a row are sorted, we can skip the current element if it's equal to the previous one.
+
+------------------------------------------------------
+
+Use binary search O(mnlogm)
+
+
+
+
+
