@@ -50,90 +50,92 @@ The user finished the input, the sentence "i a" should be saved as a historical 
 
 
 class AutocompleteSystem {
-  TrieNode history;
-  TrieNode cur;
-  StringBuilder sb;
+     TrieNode history;
+     TrieNode cur;
+     StringBuilder sb;
 
-public AutocompleteSystem(String[] sentences, int[] times) {
-    history = buildHistory(sentences, times);
-    cur = history;
-    sb = new StringBuilder();
-}
 
-public List<String> input(char c) {
-    List<String> res = new LinkedList<>();
-    TreeMap map = new TreeMap<Integer, PriorityQueue<String>>();
-    if (c!='#') {
-        int idx;
-        if (c == ' ')
-            idx = 26;
-        else
-            idx = c-'a';
-        if (cur.next[idx]==null)
-            cur.next[idx]=new TrieNode();
-        cur = cur.next[idx];
-        sb.append(c);
-        getTopSentences(cur, map);
-        getTop3Sentences(map, res);
-    } else {
-        cur.sentence = sb.toString();
-        cur.count++;
-        cur = history;
-        sb.setLength(0);
-    }
-    
-    return res;
-}
+      class TrieNode{
+          TrieNode[] next = new TrieNode[27];
+          int count = 0;
+          String sentence = null;
+      }
 
-private void getTop3Sentences(TreeMap<Integer, PriorityQueue<String>> map, List<String> res) {
-    int count = 0;
-    while (count<3 && map.size()>0) {
-        PriorityQueue<String> queue = map.pollLastEntry().getValue();
-        while(count<3 && queue.size()>0) {
-            res.add(queue.poll());
-            count++;
-        }
-    }
-}
+      public AutocompleteSystem(String[] sentences, int[] times) {
+          history = buildHistory(sentences, times);
+          cur = history;
+          sb = new StringBuilder();
+      }
 
-private void getTopSentences(TrieNode root, TreeMap<Integer, PriorityQueue<String>> res) {
-    if (root.sentence != null) {
-        if (!res.containsKey(root.count)) {
-            res.put(root.count, new PriorityQueue<>());
-        }
-        res.get(root.count).add(root.sentence);
-    }
-    
-    for(TrieNode node : root.next) {
-        if (node!=null)
-            getTopSentences(node, res);
-    }
-}
+      public List<String> input(char c) {
+          List<String> res = new LinkedList<>();
+          TreeMap map = new TreeMap<Integer, PriorityQueue<String>>();
+          if (c!='#') {
+              int idx;
+              if (c == ' ')
+                  idx = 26;
+              else
+                  idx = c-'a';
+              if (cur.next[idx]==null)
+                  cur.next[idx]=new TrieNode();
+              cur = cur.next[idx];
+              sb.append(c);
+              getTopSentences(cur, map);
+              getTop3Sentences(map, res);
+          } else {
+              cur.sentence = sb.toString();
+              cur.count++;
+              cur = history;
+              sb.setLength(0);
+          }
 
-private TrieNode buildHistory(String[] sentences, int[] times) {
-    TrieNode root = new TrieNode();
-    for (int i=0; i<sentences.length; i++) {
-        TrieNode cur = root;
-        for (int j=0; j<sentences[i].length(); j++) {
-            int idx;
-            if (sentences[i].charAt(j) == ' ')
-                idx = 26;
-            else
-                idx = sentences[i].charAt(j)-'a';
-            if (cur.next[idx]==null)
-                cur.next[idx]=new TrieNode();
-            cur=cur.next[idx];
-        }
-        cur.count = times[i];
-        cur.sentence = sentences[i];
-    }
-    
-    return root;
-}
+          return res;
+      }
 
-class TrieNode{
-    TrieNode[] next = new TrieNode[27];
-    int count = 0;
-    String sentence = null;
-}
+      private void getTop3Sentences(TreeMap<Integer, PriorityQueue<String>> map, List<String> res) {
+          int count = 0;
+          while (count<3 && map.size()>0) {
+              PriorityQueue<String> queue = map.pollLastEntry().getValue();
+              while(count<3 && queue.size()>0) {
+                  res.add(queue.poll());
+                  count++;
+              }
+          }
+      }
+
+      private void getTopSentences(TrieNode root, TreeMap<Integer, PriorityQueue<String>> res) {
+          if (root.sentence != null) {
+              if (!res.containsKey(root.count)) {
+                  res.put(root.count, new PriorityQueue<>());
+              }
+              res.get(root.count).add(root.sentence);
+          }
+
+          for(TrieNode node : root.next) {
+              if (node!=null)
+                  getTopSentences(node, res);
+          }
+      }
+
+      private TrieNode buildHistory(String[] sentences, int[] times) {
+          TrieNode root = new TrieNode();
+          for (int i=0; i<sentences.length; i++) {
+              TrieNode cur = root;
+              for (int j=0; j<sentences[i].length(); j++) {
+                  int idx;
+                  if (sentences[i].charAt(j) == ' ')
+                      idx = 26;
+                  else
+                      idx = sentences[i].charAt(j)-'a';
+                  if (cur.next[idx]==null)
+                      cur.next[idx]=new TrieNode();
+                  cur=cur.next[idx];
+              }
+              cur.count = times[i];
+              cur.sentence = sentences[i];
+          }
+
+          return root;
+      }
+
 }
