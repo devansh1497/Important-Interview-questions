@@ -1,0 +1,51 @@
+102. Path With Maximum Minimum Value
+
+Given a matrix of integers A with R rows and C columns, find the maximum score of a path starting at [0,0] and ending at
+[R-1,C-1].
+
+The score of a path is the minimum value in that path.  For example, the value of the path 8 →  4 →  5 →  9 is 4.
+
+A path moves some number of times from one visited cell to any neighbouring unvisited cell in one of the 4 cardinal directions (north, east, west, south).
+
+Input: [[5,4,5],[1,2,6],[7,4,6]]
+Output: 4
+Explanation: 
+The path with the maximum score is highlighted in yellow. 
+
+Input: [[2,2,1,2,2,2],[1,2,2,2,1,2]]
+Output: 2
+
+[3,4,6,3,4],[0,2,1,1,7],[8,8,3,2,7],[3,2,4,9,8],[4,1,2,0,0],[4,6,5,4,3]]
+Output: 3
+
+class Solution {
+    public int maximumMinimumPath(int[][] A) {
+        int m = A.length;
+        int n = A[0].length;
+        
+        boolean visited[][] = new boolean[m][n];
+        
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->b[2]=a[2]);
+        
+        pq.offer(new int[]{0,0,A[0][0]});
+        
+        int[] dir_x = {-1,0,1,0};
+        int[] dir_y = {0,1,0,-1};
+        
+        while(!pq.isEmpty()){
+            int i = pq.peek()[0];
+            int j = pq.peek()[1];
+            int val = pq.poll()[2];
+            
+            if(i == m-1 || j == n-1) return val;
+            
+            for(int k = 0 ; k < 4 ; k++){
+                int new_i = i+dir_x[k];
+                int new_j = j+dir_y[k];
+                if(new_i < 0 || new_j < 0 || new_i >= m || new_j >= n || visited[new_i][new_j]) continue;
+                pq.offer(new int[]{new_i,new_j,Math.min(val,A[new_i][new_j])});
+            }
+        }
+        return -1;
+    }
+}
