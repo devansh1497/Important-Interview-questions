@@ -1,0 +1,60 @@
+### Longest substring without duplicate characters
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        Set<Character> set = new HashSet<>();
+        int l = 0;
+        int n = s.length();
+        if(n == 0) return 0;
+        int r = 0;
+        int ans = 0;
+        while(l < n && r < n){
+            if(!set.contains(s.charAt(r))){
+                set.add(s.charAt(r));
+                ans = Math.max(ans,r-l+1);
+                r++;
+            }
+            else set.remove(s.charAt(l++));
+        }
+        return ans;
+    }
+}
+
+### Longest substring with atmost K DISTINCT characters
+
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        int l = 0;
+        int r = 0;
+        int n = s.length();
+        int ans = 0;
+        if(k == 0) return 0;
+        Map<Character, Integer> map = new HashMap<>();
+        while(l < n && r < n){
+        //If the current right character exists, then we can simply add it to the answer as it will not increase the number of 
+        distinct characters
+            if(map.containsKey(s.charAt(r))){
+                map.put(s.charAt(r), map.get(s.charAt(r))+1);
+                ans = Math.max(r-l+1,ans);
+                r++;
+            }
+            else{
+            //If the current right character already exists, then check if the size of the map is >k or <k. If it is < k, then
+            directly add it to the ans.
+                if(map.size() < k){
+                    map.put(s.charAt(r), 1);
+                    ans = Math.max(r-l+1,ans);
+                    r++;
+                }
+                //else if the size of map is already k, then start removing from the left till one of the characters is completely
+                deleted.
+                else{
+                    map.put(s.charAt(l), map.get(s.charAt(l))-1);
+                    if(map.get(s.charAt(l)) == 0) map.remove(s.charAt(l));
+                    l++;
+                }
+            }
+        }
+        return ans;
+    }
+}
