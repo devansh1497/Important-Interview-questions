@@ -20,6 +20,34 @@ class Solution {
     }
 }
 
+### Longest substring without duplicates (NO SET OR HASHMAP)
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int arr[] = new int[26];
+        Arrays.fill(arr,-1);
+        if(s.length() == 0) return 0;
+        int start = 0;
+        arr[s.charAt(0)-'a'] = 0;
+        int ans = 1;
+        int n = s.length();
+        for(int end = 1 ; end < n ; end++){
+            int curr = s.charAt(end) - 'a';
+            if(arr[curr] == -1){
+                // System.out.println("here");
+                ans = Math.max(end - start + 1, ans);
+                arr[curr] = end;
+            }
+            else{
+                // System.out.println("saw "+curr+" at index "+ end+" jumping to " +arr[curr]+1);
+                start = arr[curr]+1;
+                arr[curr] = end;
+            }
+        }
+        return ans;
+    }
+}
+
 ### Longest substring with atmost K DISTINCT characters
 
 class Solution {
