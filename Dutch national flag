@@ -1,0 +1,30 @@
+(Watch nickwhite for more info).
+Given an array of 0,1,2's, segerate them so that all the same numbers are adjacent and the ordering is 0->1->2 i.e sorted in a way.
+class Solution {
+    
+    void swap(int i, int j, int[] nums){
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+    
+    public void sortColors(int[] nums) {
+        int low = 0;
+        int high = nums.length-1;
+        int index = 0;
+        while(low < high && index<=high){
+            if(nums[index] == 0){
+                swap(index, low, nums);
+                low++;
+                index++;
+            }
+            else if(nums[index] == 2){
+                swap(index, high, nums);
+                high--;
+            }
+            else{
+                index++;
+            }
+        }
+    }
+}
