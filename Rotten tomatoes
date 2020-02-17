@@ -1,0 +1,54 @@
+
+In a given grid, each cell can have one of three values:
+
+the value 0 representing an empty cell;
+the value 1 representing a fresh orange;
+the value 2 representing a rotten orange.
+Every minute, any fresh orange that is adjacent (4-directionally) to a rotten orange becomes rotten.
+
+Return the minimum number of minutes that must elapse until no cell has a fresh orange.  If this is impossible, return -1 instead.
+
+
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        Queue<int[]> q = new LinkedList<>();
+        int fresh = 0;
+        
+        for(int i = 0 ; i < m ; i++){
+            for(int j = 0 ; j < n ; j++){
+                if(grid[i][j] == 2) q.offer(new int[]{i,j});
+                else if(grid[i][j] == 1) fresh++;
+            }
+        }
+        
+        int[] dir_x = new int[]{-1,0,1,0};
+        int[] dir_y = new int[]{0,-1,0,1};
+        int depth = 0;
+        if(fresh==0)return 0;
+        while(!q.isEmpty()){
+            int size = q.size();
+            // System.out.println(q.size()+" "+q.peek()[0] + " "+q.peek()[1]);
+            depth++;
+            for(int i = 0 ; i < size ; i++){
+                int[] curr = q.poll();
+                int x = curr[0];
+                int y = curr[1];
+                
+                for(int j = 0 ; j < 4 ; j++){
+                    int newX = x+dir_x[j];
+                    int newY = y+dir_y[j];
+                    if(newX < 0 || newY < 0 || newX >= m || newY >= n || grid[newX][newY] == 2 || grid[newX][newY] == 0) continue;
+                    grid[newX][newY] = 2;
+                    q.offer(new int[]{newX,newY});
+                    // System.out.println("reducedd "+newX+" "+newY);
+                    fresh--;
+                }
+            }
+        }
+        System.out.println(fresh);
+        return fresh == 0 ? depth-1 : -1;
+    }
+}
