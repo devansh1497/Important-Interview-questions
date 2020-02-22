@@ -1,0 +1,72 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
+public class Alien {
+
+	public static void main(String[] args) {
+		
+		String words[] = {"caa", "aaa", "aab"};
+		
+		Map<Character, List<Character>> adj = new HashMap<Character, List<Character>>();
+		Map<Character,Integer> in = new HashMap<Character, Integer>();
+		
+		for(char c = 'a' ; c <= 'z' ; c++) adj.put(c,new ArrayList<>());
+		
+		for(int i  = 0 ; i < words.length-1 ; i++) {
+			String word1 = words[i];
+			String word2 = words[i+1];
+
+			for(int j = 0 ; j < Math.min(word1.length(), word2.length()) ; j++) {
+
+				if(word1.charAt(j) != word2.charAt(j)) {
+					if(!adj.containsKey(word1.charAt(j))) adj.put(word1.charAt(j),new ArrayList<>());
+					adj.get(word1.charAt(j)).add(word2.charAt(j));
+					in.put(word2.charAt(j),in.getOrDefault(word2.charAt(j), 0)+1);
+					in.put(word1.charAt(j),in.getOrDefault(word1.charAt(j), 0));
+					break;
+				}
+			}
+			
+		}
+//		
+//		for(Map.Entry<Character, List<Character>> entry : adj.entrySet()) {
+//			System.out.print(entry.getKey()+"-->");
+//			for(char n : entry.getValue()) {
+//				System.out.print(" "+n);
+//			}
+//			System.out.println();
+//		}
+//		
+//		for(Map.Entry<Character, Integer> entry : in.entrySet()) {
+//			System.out.println(entry.getKey()+"->"+entry.getValue());
+//		}
+
+		StringBuilder sb = new StringBuilder();
+		int covered = 0;
+		Queue<Character> q = new LinkedList<>();
+		
+		for(Map.Entry<Character, Integer> entry : in.entrySet()) {
+			if(entry.getValue() == 0) {
+				q.offer(entry.getKey());
+				covered++;
+			}
+		}
+		
+		while(!q.isEmpty()) {
+			char curr = q.poll();
+			sb.append(curr);
+			for(char n : adj.get(curr)) {
+				in.put(n,in.get(n)-1);
+				if(in.get(n) == 0) {
+					covered++;
+					q.offer(n);
+				}
+			}
+		}
+		if(covered == adj.size()) System.out.println("Not possible"); else System.out.println(new String(sb));;
+	}
+}
