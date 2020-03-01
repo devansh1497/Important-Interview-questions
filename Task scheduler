@@ -32,6 +32,7 @@ class Solution:
         
         while pq:
             l = []
+            #K will ensure that we put N different tasks before repeating/coming back to the same element
             k = n+1
             while k > 0 and pq:
                 curr = heapq.heappop(pq)
@@ -42,7 +43,10 @@ class Solution:
             for i in l:
                 if i < 0:
                     heapq.heappush(pq,i)
-                
+            #if we have scheduled our last tasks and still k was not 0(i.e we still didn't schedule n different tasks), then we
+            #still need to break out early as after scheduling the last tasks, we don't care for idles at the end since we are
+            #already done with all out tasks...Not breaking early can result in a pattern like A->B-A->idle...and we shouldn't
+            count/put idles at the end after completing all the tasks.
             if not pq:
                 break
             ans += k
