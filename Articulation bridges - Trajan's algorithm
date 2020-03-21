@@ -1,0 +1,13 @@
+https://www.youtube.com/watch?v=aZXi1unBdJA
+
+Exp1 - Low rank of a vertex u -> The minimum id of the vertex v which can be visited from u. HOWEVER, IF WE ARE EXPLORING A BACKEDGE,
+THEN WE CANNOT EXPLORE THE GRAPH FURTHER LIKE IN CASE OF FORWARD EDGES I.E WE CAN ONLY CONSIDER AT MOST 1 BACKEDGE.
+THIS IS BECAUSE IF WE ARE EXPLORING A VERTEX SAY V. IT HAS A VERTEX WHICH HAS A BACKEDGE TO U(ALREADY VISITED SINCE ITS A BACKEDGE). NOW U MUST HAVE ALREADY UPDATED ITS NEW LOW RANK IN ITS OWN COMPONENT CYCLE. NOW IF WE CONTINUE TO GO BACKWARDS FROM U, WE MIGHT UPDATE THE LR OF V TO LR OF U(WHICH MIGHT BE HAVE BEEN UPDATED TO SOME OTHER NUMBER FROM A VERTEX IN ITS OWN 
+COMPONENT). THIS WOULD MEAN THAT WE MIGHT UPDATE LR OF V TO SOMETHING OF A VERTEX WHICH IS NOT EVEN A PART OF THE SCC OF V. 
+Therefore, in this case, we will execute the LAST LINE of the code which will comapre low[v] to id[u] instead of low[u] because low[u] might contain the id of another vertex in its own SCC. However, we only need to compare low[v] with the ORIGINAL id of u which has always been stored in id[u].
+
+Exp2 - A backwards edge is an edge that connects back to an already visited node. Alternatively, if you think of drawing the DFS tree from the starting node, then backwards edges are those that jump up the tree. When I introduce the edge from node 2 to node 8 that is a backwards edge w.r.t to our DFS traversal. When you take such an edge you min with the id of the node the backwards edge is taking you to, but you don't keep exploring the graph like you would with forward edges. At 10:30 this would be the else block on the last line getting executed.
+
+Exp3 - It is a little confusing, because he used "backward edges" in the definition. The low-link value is defined as: low-link[u] := the smallest id-value that can be reached from vertex 'u' by taking any number of forward edges and at most one backwards edge.
+That is why we cannot reach vertex 0, because as William explained, edge (8, 2) is a backward edge. Those we are not allowed to take another backwards edge (which we would need to, to reach vertex 0).
+
