@@ -11,3 +11,51 @@ Exp2 - A backwards edge is an edge that connects back to an already visited node
 Exp3 - It is a little confusing, because he used "backward edges" in the definition. The low-link value is defined as: low-link[u] := the smallest id-value that can be reached from vertex 'u' by taking any number of forward edges and at most one backwards edge.
 That is why we cannot reach vertex 0, because as William explained, edge (8, 2) is a backward edge. Those we are not allowed to take another backwards edge (which we would need to, to reach vertex 0).
 
+class Solution:
+    
+    
+    def criticalConnections(self, n: int, connections: List[List[int]]) -> List[List[int]]:
+        
+        d = {}
+        
+        id = [0]
+        
+        for i in range(n):
+            d[i] = []
+            
+        for i in connections:
+            d[i[0]].append(i[1])
+            d[i[1]].append(i[0])
+            
+            
+        visited = [False] * n
+        bridges = []
+        ids = [0] * n
+        low = [0] * n
+        
+            
+        def dfs(at,parent):
+            
+            visited[at] = True
+            ids[at] = low[at] = id[-1]
+            id[-1]+=1
+            
+            for v in d[at]:
+                if v == parent:
+                    continue
+                if not visited[v]:
+                    dfs(v,at)
+                    low[at] = min(low[at],low[v])
+                    if ids[at] < low[v]:
+                        bridges.append([at,v])
+                else:
+                    low[at] = min(low[at], ids[v])
+                    
+        for i in range(n):
+            if not visited[i]:
+                dfs(i,None)
+        return bridges
+            
+        
+        
+        
