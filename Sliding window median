@@ -1,0 +1,88 @@
+
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+Examples:
+[2,3,4] , the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Your job is to output the median array for each window in the original array.
+
+For example,
+Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+
+Window position                Median
+---------------               -----
+[1  3  -1] -3  5  3  6  7       1
+ 1 [3  -1  -3] 5  3  6  7       -1
+ 1  3 [-1  -3  5] 3  6  7       -1
+ 1  3  -1 [-3  5  3] 6  7       3
+ 1  3  -1  -3 [5  3  6] 7       5
+ 1  3  -1  -3  5 [3  6  7]      6
+Therefore, return the median sliding window as [1,-1,-1,3,5,6].
+
+
+Algorithm
+Similar problem to Find Median from Data Stream. Review my solution to that problem first, as we will be use the same algorithm explained there.
+
+Heap vs. TreeSet - removing a specific element from a heap takes O(k) time. Instead, use a TreeSet to achieve O(log k) for removal. Also, iterating over a TreeSet returns the elements in sorted order. We also don't need to reverse() our Comparator like we did in the previous problem
+
+Dealing with duplicate values in input array - Normally we would store values in our TreeSet, but since duplicate values can exist, we will store indexes instead, which are unique. Using an index, we can always retrieve the corresponding value using the input array.
+
+Comparator for TreeSet - Our comparator will take 2 indices and compare their corresponding values in the input array. In the edge case where the values are equal, we compare the indexes instead. This last step of comparing indexes is required since otherwise, the 2 elements in the TreeSet would be equivalent and thus 1 of them would be removed (since a TreeSet is an AbstractSet which removes duplicates)
+
+COMPARING WITH A-B IN COMPARATOR MIGHT RESULT IN OVERFLOW IF A IS INT_MIN AND B = -1...SO WE USE COMPARE.
+
+Solution
+class Solution {
+    public double[] medianSlidingWindow(int[] nums, int k) {
+        if (nums == null || k == 0 || k > nums.length) {
+            return new double[0];
+        }
+        Comparator<Integer> comparator = (a, b) -> nums[a] != nums[b]
+                                                 ? Integer.compare(nums[a], nums[b])
+                                                 : a - b;
+        TreeSet<Integer> smalls = new TreeSet<>(comparator);
+        TreeSet<Integer> bigs   = new TreeSet<>(comparator);
+
+        double[] result = new double[nums.length - k + 1];
+
+        for (int i = 0; i < nums.length; i++) {
+            addNum(i, smalls, bigs);
+            if (i + 1 >= k) {
+                int start = i - k + 1;
+                result[start] = findMedian(smalls, bigs, nums);
+
+                // remove tail index of window, from 1 of the TreeSets
+                if (!smalls.remove(start)) {
+                    bigs.remove(start);
+                }
+                // rebalance if necessary
+                if (smalls.size() < bigs.size()) {
+                    smalls.add(bigs.pollFirst());
+                }
+            }
+        }
+        return result;
+    }
+
+    private void addNum(int num, TreeSet<Integer> smalls, TreeSet<Integer> bigs) {
+        if (smalls.size() == bigs.size()) {
+            bigs.add(num);
+            smalls.add(bigs.pollFirst());
+        } else if (smalls.size() > bigs.size()) {
+            smalls.add(num);
+            bigs.add(smalls.pollLast());
+        } // "smalls" will never be smaller size than "bigs"
+    }
+
+    private double findMedian(TreeSet<Integer> smalls, TreeSet<Integer> bigs, int[] nums) {
+        if (smalls.isEmpty()) { // ideally should never happen
+            return 0;
+        } else if (smalls.size() == bigs.size()) {
+            return ((double) nums[smalls.last()] + nums[bigs.first()]) / 2;
+        } else {
+            return nums[smalls.last()];
+        }
+    }
+}
