@@ -1,0 +1,117 @@
+
+Given an integer n, find the closest integer (not including itself), which is a palindrome.
+
+The 'closest' is defined as absolute difference minimized between two integers.
+
+Example 1:
+Input: "123"
+Output: "121"
+Note:
+The input n is a positive integer represented by string, whose length will not exceed 18.
+If there is a tie, return the smaller one as answer.
+
+class Solution:
+    def nearestPalindromic(self, n: str) -> str:
+        
+        l = [int(i) for i in n]
+        tmp = [i for i in l]
+        
+        def convertListToInt(l):
+            mul = len(l)-1
+            ans = 0
+            for i in l:
+                ans += i*10**mul
+                mul-=1
+            return ans
+        
+        def toPalindrome(l):
+            n = len(l)
+            mid = n//2
+            
+            left = l[:mid]
+            
+            if n&1:
+                return left + [l[mid]] + left[::-1]
+            return left + left[::-1]
+            
+        
+        def incrementNumber(l):
+            n = len(l)
+            if n&1 == 1:
+                i = n//2
+            else:
+                i = n//2-1
+                
+            while i >= 0:
+                if l[i]+1 > 9:
+                    l[i] = 0
+                    i-=1
+                else:
+                    l[i]+=1
+                    break
+                    
+            return toPalindrome(l)
+        
+        def decrementNumber(l):
+            n = len(l)
+            if n&1 == 1:
+                i = n//2
+            else:
+                i = n//2-1
+                
+            while i >= 0:
+                if l[i] == 0:
+                    l[i] = 9
+                    i-=2
+                else:
+                    l[i] -= 1
+                    break
+            print(l)     
+            return toPalindrome(l)
+            
+            
+        def nextSmallestPalindrome(l):
+            n = len(l)
+            org_no = convertListToInt(l)
+            if max(l) == min(l) == 9:
+                return str(convertListToInt([1] + [0]*(n-1) + [1]))
+          
+            
+            palindromicNumber = convertListToInt(toPalindrome(l))
+            if palindromicNumber > org_no:
+                return str(palindromicNumber)
+                    
+            return str(convertListToInt(incrementNumber(l)))
+            
+            
+        def prevLargestPalindrome(l):
+            n = len(l)
+            org_no = convertListToInt(l)
+            if n > 2 and l[0] == l[-1] == 1 and max(l[1:len(l)-1]) == min(l[1:len(l)-1]) == 0:
+                return str(convertListToInt([9]*(n-1)))
+            
+              
+            if l[0] == 1 and max(l[1:]) == min(l[1:]) == 0:
+                return str(convertListToInt([9]*(n-1)))
+            
+            palindromicNumber = convertListToInt(toPalindrome(l))
+            if palindromicNumber < org_no:
+                return str(palindromicNumber)
+            
+            return str(convertListToInt(decrementNumber(l)))
+            
+        org = convertListToInt(l)
+        if org <=10:
+            return str(org-1)
+        if org == 11:
+            return str(9)
+        f = prevLargestPalindrome(l)
+        s = nextSmallestPalindrome(tmp)
+     
+        print(f,s)
+        if abs(int(f)-org) <= abs(org-int(s)):
+            return str(f)
+        return str(s)
+            
+            
+        
