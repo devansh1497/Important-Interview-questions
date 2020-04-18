@@ -1,0 +1,103 @@
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+Example:
+
+Input: S = "ADOBECODEBANC", T = "ABC"
+Output: "BANC"
+Note:
+
+If there is no such window in S that covers all characters in T, return the empty string "".
+If there is such window, you are guaranteed that there will always be only one unique minimum window in S.
+
+
+1st way:-
+ def minWindow(self, s: str, t: str) -> str:
+        m = len(s)
+        n = len(t)
+        
+        if n > m:
+            return ""
+        
+        d = Counter(t)
+        dd = {} #for the larger substring s
+        def check():
+            for k,v in d.items():
+                if k not in dd or dd[k] < v:
+                    return False
+            return True
+        
+        l = 0
+        st = -1
+        end = -1
+        ans = 10**10
+         for r in range(m):
+             curr = s[r]
+             if curr not in dd:
+                 dd[curr] = 0
+             dd[curr]+=1
+             # print(l,r,dd)
+             while check():
+                 if ans > r-l:
+                     ans = r-l
+                     st = l
+                     end = r
+                 dd[s[l]] -= 1
+                 l+=1
+         return s[st:end+1]
+         
+2nd way->more efficient...won't iterate over the entire dictionry to check if a window is valid
+
+def minWindow(self, s: str, t: str) -> str:
+        m = len(s)
+        n = len(t)
+        
+        if n > m:
+            return ""
+        
+        d = Counter(t)
+        dd = {} #for the larger substring s
+        def check():
+            for k,v in d.items():
+                if k not in dd or dd[k] < v:
+                    return False
+            return True
+        
+        l = 0
+        st = -1
+        end = -1
+        ans = 10**10
+        #We will use a count variable. This variable will only be reduced when we cover all characters of a type.
+        #Ex. if we have aabb, then count will be used when both a's are covered. then it will only be reduced whe both b's are covered
+        count = len(d)
+        # print(count)
+        for r in range(m):
+            curr =s[r]
+            if curr not in d:
+                d[curr] = 0
+            #we need to even cover cases when our window has more characters of a type then needed. This is because,
+            #there is a possibility that in our window which has all characters, we might have some extra characters of a type
+            #than required.
+            d[curr] -= 1
+            #Reduce the count only when for a character, its frequency in the window is atleast equal to the frequency in the 
+            #shorter string.
+            if d[curr] == 0:
+                count -= 1
+            #our window will only be valid if count == 0. So, keep removing left elements till the window is valid.
+            while count == 0:
+                if ans > r-l:
+                    ans = r-l
+                    st = l
+                    end = r
+                d[s[l]] += 1
+                #Some characters might have a negative frequency indicating that their frequency was more than what was needed 
+                #So, during shrinking, as long as its negative, it means that still we have more frequency than needed and we 
+                #can successfully remove them. When their frequency becomes 0, then we can not afford to remove them again. 
+                #So, on removing, if it becomes > 0, then its frequency becomes less than needed. So, we ncrease the count
+                #indiciating that the window is invalid now. So we need to stop shrinking from the left side.
+                if d[s[l]] > 0:
+                    count += 1
+                l += 1
+                
+        return s[st:end+1]
+            
+                    
