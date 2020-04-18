@@ -1,0 +1,20 @@
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        st = set()
+        
+        ans = 0
+        n = len(s)
+        l = 0
+        for r in range(n):
+            #this loop will check if the current s[r] already exists in 
+            #the set. If it does, then it will also take care of removing
+            #all the elements from l including the first occurenct of s[r].
+            #This means that this loop wll continue till s[l] != s[r] and
+            #it will also remove s[l] when s[l] == s[r].
+            while s[r] in st:
+                st.remove(s[l])
+                l+=1
+            st.add(s[r])
+            ans = max(ans,r-l+1)
+            
+        return ans
