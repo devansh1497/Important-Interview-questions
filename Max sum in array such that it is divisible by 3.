@@ -80,6 +80,11 @@ private int maxSum(int[] nums, int k) {
             int remainder = nums[i] % k;
             for (int j = 0; j < k; j++) {
                 dp[i+1][j] = Math.max(dp[i][j], dp[i][(j + k - remainder) % k] + nums[i]);
+		//(j+k-remainder)%k because we need to have j as remainder when a value is divided by k. So, lets add j to k. Eg. we need 1 as remainder i.e j = 1 and
+		//k = 3. This means
+		//that we will need a 4(j+k) to get a remainder of 1(4%3 = 1). And now, we already have some value out of it as the current number has a remainder 
+		//called "remainder". So, the new value that we would need is k+j-remainder. Take its mod by k so as to keep the value < k. When unsure, always take
+		//mod with k since there is no harm.
             }
         }
         //res
