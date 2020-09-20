@@ -1,0 +1,42 @@
+Given an array of positive integers nums, remove the smallest subarray (possibly empty) such that the sum of the remaining elements is divisible by p. It is not allowed to remove the whole array.
+
+Return the length of the smallest subarray that you need to remove, or -1 if it's impossible.
+
+A subarray is defined as a contiguous block of elements in the array.
+
+class Solution:
+    def minSubarray(self, nums: List[int], p: int) -> int:
+        n = len(nums)
+        sm = sum(nums)
+        if sm % p == 0:
+            return 0
+        r = sm%p
+        d = {}
+        sm = 0
+        ans = 10**10
+        d[0] = -1
+        target = r
+        
+#         rem = sum(arr)%p
+#         if rem == 0:
+#             return 0
+#         else we need to delete the smallest subarray arr[i:j] such that sum(arr[i:j])%p == rem.
+#         Now during our iteration, if we are currently at index j, then we need to search for the nearest index i
+#         such that i < j and (sum(arr[:j])%p - sum(arr[:i])%p) %p = sum(arr) % p
+#         During iteration we are at index j. So, we have our running sum computed already. To find i, we need to simplify the above equation:-
+#             sum(arr[:i])%p = (sum(arr) % p - sum(arr[:j]) % p) % p.
+#             To prevent rhs getting to -ve, we can add +p.
+#             So, we get sum(arr[:i])%p = (sum(arr) % p - sum(arr[:j]) % p + p) % p.
+            
+        
+        for i in range(n):
+            sm+= nums[i]
+            sm %= p
+            search = (sm-target+p)%p
+            if search in d:
+                ans = min(ans,i-d[search])
+            d[sm] = i
+        if ans >=n:
+            return -1
+        return ans
+            
