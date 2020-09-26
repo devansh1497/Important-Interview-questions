@@ -1,0 +1,17 @@
+https://leetcode.com/problems/remove-boxes/discuss/645838/Evolve-from-intuition-to-dp
+
+class Solution:
+    def removeBoxes(self, boxes: List[int]) -> int:
+        
+        n = len(boxes)
+        
+        @lru_cache(None)
+        def dp(streak,i,j):
+            if i > j:
+                return 0
+            mx = (streak+1)**2 + dp(0,i+1,j)
+            for k in range(i+1,j+1):
+                if boxes[i] == boxes[k]:
+                    mx = max(mx, dp(0,i+1,k-1) + dp(streak+1,k,j))
+            return mx
+        return dp(0,0,n-1)
