@@ -1,0 +1,122 @@
+
+https://www.youtube.com/watch?v=rw4s4M3hFfs
+
+TRUE = 'true'
+FALSE = 'false'
+GYM = 'gym'
+SCHOOL = 'school'
+STORE = 'store'
+reqs = [GYM, SCHOOL, STORE]
+# OFFICE = 'office'
+d = {GYM: [], SCHOOL: [], STORE: []}
+
+blocks = [
+    {
+        GYM: FALSE,
+        SCHOOL: TRUE,
+        STORE: FALSE,
+        # 'office': TRUE
+    },
+    {
+        GYM: TRUE,
+        SCHOOL: FALSE,
+        STORE: FALSE,
+        # 'office': TRUE
+    },
+    {
+        GYM : TRUE,
+        SCHOOL: TRUE,
+        STORE: FALSE,
+        # 'office': TRUE
+    },
+    {
+        GYM: FALSE,
+        SCHOOL: TRUE,
+        STORE: FALSE,
+        # 'office': TRUE
+    },
+    {
+        GYM: FALSE,
+        SCHOOL: TRUE,
+        STORE: TRUE,
+        # 'office': TRUE
+    }
+    # {
+    #     GYM: TRUE,
+    #     SCHOOL: TRUE,
+    #     STORE: TRUE,
+    #     'office': TRUE
+    # },
+]
+
+
+
+for (index, block) in enumerate(blocks):
+    if block[GYM] == TRUE:
+        d[GYM].append(index)
+    if block[SCHOOL] == TRUE:
+        d[SCHOOL].append(index)
+    if block[STORE] == TRUE:
+        d[STORE].append(index)
+    # if block[OFFICE]:
+    #     d[OFFICE].append(index)
+
+
+def find_greatest_index_smaller_than_index(currIndex, arr):
+    lo = 0
+    hi = len(arr)-1
+    if arr[0] > currIndex:
+        return 10**10
+    local_ans = -1
+    while lo <= hi:
+        mid = (lo+hi)//2
+        if arr[mid] < currIndex:
+            local_ans = arr[mid]
+            lo = mid+1
+        elif arr[mid] == currIndex:
+            return arr[mid]
+        else:
+            hi = mid-1
+    return local_ans
+
+
+def find_smallest_index_greater_than_index(currIndex, arr):
+    lo = 0
+    hi = len(arr)-1
+    if arr[-1] < currIndex:
+        return 10**10
+    local_ans = -1
+    while lo <= hi:
+        mid = (lo+hi)//2
+        if arr[mid] > currIndex:
+            local_ans = arr[mid]
+            hi = mid-1
+        elif arr[mid] == currIndex:
+            return arr[mid]
+        else:
+            lo = mid+1
+    return local_ans
+
+
+ans = 10**10
+ans_idx = -1
+ans_dist = -1
+
+for (index,block) in enumerate(blocks):
+    store = min(abs(index - find_greatest_index_smaller_than_index(index, d[STORE])), abs(find_smallest_index_greater_than_index(index, d[STORE]) - index))
+    # office = min(index - find_greater_value_smaller_than_index(index, d[OFFICE]), find_smaller_value_greater_than_index(index, d[OFFICE]) - index)
+    school = min(abs(index - find_greatest_index_smaller_than_index(index, d[SCHOOL])), abs(find_smallest_index_greater_than_index(index, d[SCHOOL]) - index))
+    gym = min(abs(index - find_greatest_index_smaller_than_index(index, d[GYM])), abs(find_smallest_index_greater_than_index(index, d[GYM]) - index))
+    cost = max(store, school, gym)
+    if cost < ans:
+        ans = cost
+        ans_idx = index
+        ans_dist = cost
+
+print('index:',ans_idx,'with cost:',ans_dist)
+
+
+
+
+
+
